@@ -1,3 +1,12 @@
+/*
+ *@author Daniel Alejandro Rangel Sanchez
+ */
+#include "solitario.h"
 #include <iostream>
 
-int main(void) { return 0; }
+int main(void) {
+  Solitario a;
+  a.debug();
+
+  return 0;
+}

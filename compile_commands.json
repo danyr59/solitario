@@ -1,0 +1,7 @@
+[
+{
+  "directory": "/home/daniel/pr3/actividades/codigos/solitario/build",
+  "command": "/usr/bin/c++   -I/home/daniel/pr3/actividades/codigos/solitario/engine    -std=gnu++17 -o CMakeFiles/solitario.run.dir/main.cpp.o -c /home/daniel/pr3/actividades/codigos/solitario/main.cpp",
+  "file": "/home/daniel/pr3/actividades/codigos/solitario/main.cpp"
+}
+]

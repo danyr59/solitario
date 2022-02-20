@@ -12,8 +12,9 @@ include_directories(engine/)
 
 
 
+
 # add_subdirectory(ui)
-# add_subdirectory(engine)
+add_subdirectory(engine)
 
 add_executable(
   ${PROJECT_NAME}.run
@@ -21,10 +22,11 @@ add_executable(
 )
 
 
-# target_link_libraries(
-#   ${PROJECT_NAME}.run
-#   PUBLIC A_ENGINE
-# )
+target_link_libraries(
+  ${PROJECT_NAME}.run
+  PUBLIC A_ENGINE
+)
+
 set_property(
   TARGET ${PROJECT_NAME}.run
   PROPERTY ${CMAKE_CXX_STANDARD}
