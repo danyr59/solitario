@@ -5,6 +5,7 @@
  *
  **/
 
+#include <initializer_list>
 #include <string>
 class Card {
 private:
@@ -13,6 +14,7 @@ private:
 
 public:
   Card() {}
+  Card(std::initializer_list<std::string>);
   Card(std::string);
   void setValue(std::string);
   void setFamily(std::string);

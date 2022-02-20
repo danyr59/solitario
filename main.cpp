@@ -6,7 +6,10 @@
 
 int main(void) {
   Solitario a;
-  a.debug();
+  // a.debug();
+  a.start();
+  // a.tablero();
+  // a.random();
 
   return 0;
 }
