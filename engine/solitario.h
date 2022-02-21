@@ -26,10 +26,20 @@ protected:
   std::stack<Card *> escalera5;
   std::stack<Card *> escalera6;
   std::stack<Card *> escalera7;
-  std::stack<Card *> sobrantes;
+
+  // sobrantes[2] representa:
+  //[0]-> las cartas sobrantes del random inicial
+  //[1]-> las cartas que se piden y no encajan las empujamos a esta pila
+  std::stack<Card *> sobrantes[2];
+
+  // array  de stack que representa las 7 escaleras del juego
   std::stack<Card *> *pilas[7];
+
+  // este vector me es util para ver las cartas destapadas o que estan en el
+  // tope de los stacks
+  // y asi poder mapearlas
   std::vector<Card *> aux_pilas[7];
-  // std::vector<std::vector<Card *>> aux_pilas;
+
   std::vector<Card> mazo = {
       {"AS", "T"}, {"2 ", "T"}, {"3 ", "T"}, {"4 ", "T"}, {"5 ", "T"},
       {"6 ", "T"}, {"7 ", "T"}, {"8 ", "T"}, {"9 ", "T"}, {"10", "T"},

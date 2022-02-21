@@ -47,11 +47,22 @@ enum num : int {
   K
 };
 void Solitario::check(int colS, int colM) {
+  std::string cols, colm;
+  int cantPop = 0;
+  // verificar que en vector tenga solo una carta , ya que si
+  // tiene mas de una el jugador tiene varias opciones
 
-  auto cols = !this->pilas[colS]->empty() ? this->pilas[colS]->top()->getValue()
-                                          : "false",
-       colm = !this->pilas[colM]->empty() ? this->pilas[colM]->top()->getValue()
+  if (this->aux_pilas[colS].size() > 1) {
+    cantPop = this->aux_pilas[colS].size() - 1;
+  }
+
+  // asigno el primer carta destapada en caso de haberla si no asigno el top de
+  // la pila
+  cols = this->aux_pilas[colS].size() > 1 ? this->aux_pilas[colS][0]->getValue()
+         : !this->pilas[colS]->empty()    ? this->pilas[colS]->top()->getValue()
                                           : "false";
+  colm = !this->pilas[colM]->empty() ? this->pilas[colM]->top()->getValue()
+                                     : "false";
   // compruebo que la columna seleccionada tenga datos y no sea vacio
   if ((cols == "false" && colm != "false"))
     return;
@@ -64,21 +75,45 @@ void Solitario::check(int colS, int colM) {
   if (ok)
     return;
 
-  auto operation = [this, &colS, &colM]() -> void {
+#define iterarStack(cont) for (int i = 0; i <= cont; i++)
+
+  // this->aux_pilas[colS].pop_back();
+  // this->pilas[colM]->push(this->pilas[colS]->top());
+
+  auto operation = [this, &colS, &colM, cantPop]() -> void {
     // añadir a pila a mover
     if (!this->pilas[colS]->empty()) {
-      this->aux_pilas[colM].push_back(this->pilas[colS]->top());
-      this->pilas[colM]->push(this->pilas[colS]->top());
+      if (cantPop != 0) {
+
+        iterarStack(cantPop) {
+          this->aux_pilas[colM].push_back(this->aux_pilas[colS][i]);
+          this->pilas[colM]->push(this->aux_pilas[colS][i]);
+        }
+
+      } else {
+        this->aux_pilas[colM].push_back(this->pilas[colS]->top());
+        this->pilas[colM]->push(this->pilas[colS]->top());
+      }
     }
 
     // pop del elemento en la pila seleccionada
     if (!this->pilas[colS]->empty()) {
-      this->pilas[colS]->pop();
+      if (cantPop != 0) {
+        iterarStack(cantPop) { this->pilas[colS]->pop(); }
+      } else {
+        this->pilas[colS]->pop();
+      }
 
       if (!this->aux_pilas[colS].empty()) {
-        this->aux_pilas[colS].pop_back();
-        if (!this->pilas[colS]->empty())
+        if (cantPop != 0) {
+          iterarStack(cantPop) { this->aux_pilas[colS].pop_back(); }
+        } else {
+          this->aux_pilas[colS].pop_back();
+        }
+        if (!this->pilas[colS]->empty()) {
+
           this->aux_pilas[colS].push_back(this->pilas[colS]->top());
+        }
       }
     }
   };
@@ -228,7 +263,7 @@ void Solitario::initialize() {
   this->random();
 }
 void Solitario::debug() {
-  // #if IMPRESION_ESCALERA
+#ifdef IMPRESION_ESCALERA
 
   std::cout << "escalera7" << std::endl;
   for (int i = 0; i < 7; i++) {
@@ -276,12 +311,12 @@ void Solitario::debug() {
   }
   std::cout << std::endl << "resto" << std::endl;
   for (int i = 0; i < 24; i++) {
-    std::cout << this->sobrantes.top()->getValue()
-              << this->sobrantes.top()->getFamily() << std::endl;
-    this->sobrantes.pop();
+    std::cout << this->sobrantes[0].top()->getValue()
+              << this->sobrantes[0].top()->getFamily() << std::endl;
+    this->sobrantes[0].pop();
   }
 
-  // #endif // IMPRESION_ESCALERA
+#endif // IMPRESION_ESCALERA
 
   // for (int i = 0; i < 52; i++) {
   //   std::cout << this->card[i].getValue() << std::endl;
@@ -333,7 +368,7 @@ void Solitario::random() {
       }
     }
     if (i >= 28) {
-      this->sobrantes.push(&card[datos_desordenados[i]]);
+      this->sobrantes[0].push(&card[datos_desordenados[i]]);
     }
     // datos_desordenados[i];
   }
@@ -361,14 +396,6 @@ void Solitario::random() {
 }
 
 void Solitario::tablero() {
-  // for (int i = 1; i <= 7; i++) {
-
-  // auto a =
-  //     [this]() {
-  //       std::cout << this->escalera1.top();
-  //       return 1;
-  //     }
-
   std::string space = "       ";
   std::string space_ = "      ";
   std::string x = space_ + "x";
@@ -376,7 +403,7 @@ void Solitario::tablero() {
   // std::cout << i << std::endl;
   for (auto arr : this->aux_pilas) {
     for (auto elementos : arr) {
-      std::cout << elementos->getFamily() << " " << elementos->getValue()
+      std::cout << " " << elementos->getFamily() << " " << elementos->getValue()
                 << " ";
     }
     std::cout << std::endl;
