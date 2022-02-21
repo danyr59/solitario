@@ -27,6 +27,9 @@ protected:
   std::stack<Card *> escalera6;
   std::stack<Card *> escalera7;
 
+  // bool
+  bool mostrarSobranteTop = false;
+
   // sobrantes[2] representa:
   //[0]-> las cartas sobrantes del random inicial
   //[1]-> las cartas que se piden y no encajan las empujamos a esta pila

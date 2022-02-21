@@ -31,21 +31,6 @@ Solitario::Solitario() : cantidad_cartas(52) {
  * @return void
  *
  */
-enum num : int {
-  AS = 0,
-  DOS,
-  TRES,
-  CUATRO,
-  CINCO,
-  SEIS,
-  SIETE,
-  OCHO,
-  NUEVE,
-  DIEZ,
-  J,
-  Q,
-  K
-};
 void Solitario::check(int colS, int colM) {
   std::string cols, colm;
   int cantPop = 0;
@@ -155,6 +140,8 @@ void Solitario::mover(std::string &a) {
 
     // realiza la operatciones correspondiente
     this->check(colS, colM);
+  } else if (a == "y" or a == "n") {
+    this->mostrarSobranteTop = a == "y" ? true : false;
   }
 }
 void Solitario::start() {
@@ -162,7 +149,9 @@ void Solitario::start() {
   std::string a;
   do {
     this->tablero();
-    std::cout << "(columna seleccionada)-(columna a mover). ej=7-1 = ";
+    std::cout << "desea pedir una carta de la mano? (y/n)" << std::endl;
+    std::cout
+        << "(columna seleccionada)-(columna a mover). ej.`7-1` or `y/n` = ";
     std::cin >> a;
     this->mover(a);
     // std::cout << a << std::endl;
@@ -410,6 +399,16 @@ void Solitario::tablero() {
     std::cout << std::endl;
   }
 
+  // mazo sobrante
+  std::cout << std::endl;
+  if (this->sobrantes[0].empty() && this->mostrarSobranteTop) {
+    std::cout << "mazo Sobrante :" << this->sobrantes[1].top()->getFamily()
+              << " " << this->sobrantes[1].top()->getValue() << std::endl;
+  } else if (this->sobrantes[1].empty() && this->mostrarSobranteTop) {
+    std::cout << "mazo Sobrante :" << this->sobrantes[0].top()->getFamily()
+              << " " << this->sobrantes[0].top()->getValue() << std::endl;
+  }
+
   // a = i == 1 ? !this->escalera1.empty()
   //                  ? this->escalera1.top()->getFamily() + " " +
   //                        this->escalera1.top()->getValue() + x + x + x + x
@@ -523,3 +522,18 @@ Solitario::~Solitario() { delete[] card; }
 //   K
 // };
 // } // namespace Mazo
+// enum num : int {
+//   AS = 0,
+//   DOS,
+//   TRES,
+//   CUATRO,
+//   CINCO,
+//   SEIS,
+//   SIETE,
+//   OCHO,
+//   NUEVE,
+//   DIEZ,
+//   J,
+//   Q,
+//   K
+// };
