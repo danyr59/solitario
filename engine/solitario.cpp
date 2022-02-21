@@ -64,7 +64,8 @@ void Solitario::check(int colS, int colM) {
   colm = !this->pilas[colM]->empty() ? this->pilas[colM]->top()->getValue()
                                      : "false";
   // compruebo que la columna seleccionada tenga datos y no sea vacio
-  if ((cols == "false" && colm != "false"))
+  if ((cols == "false" && colm != "false") ||
+      (cols != "false" && colm == "false"))
     return;
 
   bool ok = this->pilas[colS]->top()->getFamily() ==
