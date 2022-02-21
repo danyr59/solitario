@@ -9,6 +9,7 @@
 #include <string>
 #include <tuple>
 #include <utility>
+#include <vector>
 #define IMPRESION_ESCALERA
 /**
  * @function Solitario
@@ -21,6 +22,7 @@
 Solitario::Solitario() : cantidad_cartas(52) {
   this->card = new Card[this->cantidad_cartas];
   this->initialize();
+  // this->aux_pilas.resize(7);
 }
 
 /**
@@ -45,76 +47,78 @@ enum num : int {
   K
 };
 void Solitario::check(int colS, int colM) {
-  // auto isNumber = [](std::string a) {
-  //   if (a == "1" || a == "2" || a == "3" || a == "3" || a == "4" || a == "5"
-  //   ||
-  //       a == "6" || a == "7" || a == "8" || a == "9" || a == "10") {
-  //     return true;
-  //   }
-  //   return false;
-  // };
 
-  auto cols = this->pilas[colS]->top()->getValue(),
-       colm = this->pilas[colM]->top()->getValue();
+  auto cols = !this->pilas[colS]->empty() ? this->pilas[colS]->top()->getValue()
+                                          : "false",
+       colm = !this->pilas[colM]->empty() ? this->pilas[colM]->top()->getValue()
+                                          : "false";
+  // compruebo que la columna seleccionada tenga datos y no sea vacio
+  if ((cols == "false" && colm != "false"))
+    return;
 
+  bool ok = this->pilas[colS]->top()->getFamily() ==
+                    this->pilas[colM]->top()->getFamily()
+                ? true
+                : false;
+  // son palos iguales
+  if (ok)
+    return;
+
+  auto operation = [this, &colS, &colM]() -> void {
+    // añadir a pila a mover
+    if (!this->pilas[colS]->empty()) {
+      this->aux_pilas[colM].push_back(this->pilas[colS]->top());
+      this->pilas[colM]->push(this->pilas[colS]->top());
+    }
+
+    // pop del elemento en la pila seleccionada
+    if (!this->pilas[colS]->empty()) {
+      this->pilas[colS]->pop();
+
+      if (!this->aux_pilas[colS].empty()) {
+        this->aux_pilas[colS].pop_back();
+        if (!this->pilas[colS]->empty())
+          this->aux_pilas[colS].push_back(this->pilas[colS]->top());
+      }
+    }
+  };
   // std::cout << cols << " " << colm << std::endl;
 
   if (cols == "AS" && colm == "2 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "2 " && colm == "3 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "3 " && colm == "4 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "4 " && colm == "5 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "5 " && colm == "6 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "6 " && colm == "7 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "7 " && colm == "8 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "8 " && colm == "9 ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "9 " && colm == "10") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "10" && colm == "J ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "J " && colm == "Q ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   } else if (cols == "Q " && colm == "K ") {
-    this->pilas[colM]->push(this->pilas[colS]->top());
-    this->pilas[colS]->pop();
+    operation();
   }
 }
 
-// else if (std::stoi(cols) == 2 && std::stoi(colm) == 3) {
-//   this->pilas[colM]->push(this->pilas[colS]->top());
-//   this->pilas[colS]->pop();
-// }
-
-// num a = this->pilas[colS]->top()->getValue();
-// std::cout << this->pilas[colS]->top()->getValue() << std::endl;
-// std::cout << this->pilas[colM]->top()->getValue() << std::endl;
 void Solitario::mover(std::string &a) {
-  // std::cout << a << a.size() << std::endl;
   int colS, colM;
   if (a.size() == 3) {
     colS = std::stoi(a.substr(0, 1)) - 1;
     colM = std::stoi(a.substr(2, 3)) - 1;
-    // std::cout << colS << " " << colM << std::endl;
+
+    // realiza la operatciones correspondiente
     this->check(colS, colM);
-    // std::cout << a.substr(1, 2) << /* " " << colM << */ std::endl;
   }
 }
 void Solitario::start() {
@@ -126,7 +130,7 @@ void Solitario::start() {
     std::cin >> a;
     this->mover(a);
     // std::cout << a << std::endl;
-    std::cout << "0 - Salir" << std::endl << "1 - Continuar" << std::endl;
+    std::cout << "0) Salir" << std::endl << "1) Continuar" << std::endl;
     std::cin >> ok;
 
   } while (ok);
@@ -349,44 +353,78 @@ void Solitario::random() {
   this->pilas[5] = &this->escalera6;
   this->pilas[6] = &this->escalera7;
 
+  // std::vector<Card *> cardTop;
+  for (int i = 0; i < 7; i++) {
+    this->aux_pilas[i].push_back(this->pilas[i]->top());
+  }
   // luego llenamos las escaleras
 }
 
 void Solitario::tablero() {
-  for (int i = 1; i <= 7; i++) {
+  // for (int i = 1; i <= 7; i++) {
 
-    // auto a =
-    //     [this]() {
-    //       std::cout << this->escalera1.top();
-    //       return 1;
-    //     }
+  // auto a =
+  //     [this]() {
+  //       std::cout << this->escalera1.top();
+  //       return 1;
+  //     }
 
-    std::string space = "       ";
-    std::string space_ = "      ";
-    std::string x = space_ + "x";
-    std::string a;
-    // std::cout << i << std::endl;
-    a = i == 1 ? this->escalera1.top()->getFamily() + " " +
-                     this->escalera1.top()->getValue() + x + x + x + x + x + x
-        : i == 2 ? space + this->escalera2.top()->getFamily() + " " +
-                       this->escalera2.top()->getValue() + x + x + x + x + x
-        : i == 3 ? space + space + this->escalera3.top()->getFamily() + " " +
-                       this->escalera3.top()->getValue() + x + x + x + x
-        : i == 4 ? space + space + space + this->escalera4.top()->getFamily() +
-                       " " + this->escalera4.top()->getValue() + x + x + x
-        : i == 5 ? space + space + space + space +
-                       this->escalera5.top()->getFamily() + " " +
-                       this->escalera5.top()->getValue() + x + x
-        : i == 6 ? space + space + space + space + space +
-                       this->escalera6.top()->getFamily() + " " +
-                       this->escalera6.top()->getValue() + x
-        : i == 7 ? space + space + space + space + space + space +
-                       this->escalera7.top()->getFamily() + " " +
-                       this->escalera7.top()->getValue()
-                 : "";
-
-    std::cout << a << std::endl;
+  std::string space = "       ";
+  std::string space_ = "      ";
+  std::string x = space_ + "x";
+  std::string a;
+  // std::cout << i << std::endl;
+  for (auto arr : this->aux_pilas) {
+    for (auto elementos : arr) {
+      std::cout << elementos->getFamily() << " " << elementos->getValue()
+                << " ";
+    }
+    std::cout << std::endl;
   }
+
+  // a = i == 1 ? !this->escalera1.empty()
+  //                  ? this->escalera1.top()->getFamily() + " " +
+  //                        this->escalera1.top()->getValue() + x + x + x + x
+  //                        + x + x
+  //                  : "x  " + x + x + x + x + x + x
+  //     : i == 2
+  //         ? !this->escalera2.empty()
+  //               ? space + this->escalera2.top()->getFamily() + " " +
+  //                     this->escalera2.top()->getValue() + x + x + x + x + x
+  //               : "x  " + x + x + x + x + x
+  //     : i == 3
+  //         ? !this->escalera3.empty()
+  //               ? space + space + this->escalera3.top()->getFamily() + " "
+  //               +
+  //                     this->escalera3.top()->getValue() + x + x + x + x
+  //               : "x  " + x + x + x + x
+  //     : i == 4
+  //         ? !this->escalera4.empty()
+  //               ? space + space + space +
+  //               this->escalera4.top()->getFamily() +
+  //                     " " + this->escalera4.top()->getValue() + x + x + x
+  //               : "x  " + x + x + x
+  //     : i == 5 ? !this->escalera5.empty()
+  //                    ? space + space + space + space +
+  //                          this->escalera5.top()->getFamily() + " " +
+  //                          this->escalera5.top()->getValue() + x + x
+  //                    : "x  " + x + x
+
+  //     : i == 6 ? !this->escalera6.empty()
+  //                    ? space + space + space + space + space +
+  //                          this->escalera6.top()->getFamily() + " " +
+  //                          this->escalera6.top()->getValue() + x
+  //                    : "x  " + x
+
+  //     : i == 7 ? !this->escalera7.empty()
+  //                    ? space + space + space + space + space + space +
+  //                          this->escalera7.top()->getFamily() + " " +
+  //                          this->escalera7.top()->getValue()
+  //                    : "x  "
+  //              : "";
+
+  // std::cout << a << std::endl;
+  // }
 }
 
 Solitario::~Solitario() { delete[] card; }
