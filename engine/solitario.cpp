@@ -136,8 +136,9 @@ void Solitario::verificarA() {
   std::string family;
   int escaleraA;
   for (int i = 0; i < 7; i++) {
-    pila = this->pilas[i]->top()->valor;
-    family = this->pilas[i]->top()->getFamily();
+    pila = !this->pilas[i]->empty() ? this->pilas[i]->top()->valor : -1;
+    family =
+        !this->pilas[i]->empty() ? this->pilas[i]->top()->getFamily() : "-1";
 
     if (pila == 1 && family == "C" && this->escalerasA[0].empty()) {
       this->escalerasA[0].push(this->pilas[i]->top());
@@ -253,6 +254,12 @@ void Solitario::mover(std::string &a) {
   };
 
   int colS, colM;
+  for (auto pilas : aux_pilas) {
+    if (pilas.size() == 13) {
+      std::cout << "HAZ GANADO!" << std::endl;
+    }
+  }
+
   if (a.size() == 3) {
     colS = std::stoi(a.substr(0, 1)) - 1;
     colM = std::stoi(a.substr(2, 3)) - 1;
@@ -260,11 +267,13 @@ void Solitario::mover(std::string &a) {
     // realiza la operatciones correspondiente
     this->check(colS, colM);
     // this->mostrarSobranteTop = false;
-  } else if (a == "y" or a == "n") {
+  } else if (a == "y") {
     // this->mostrarSobranteTop = a == "y" ? true : false;
     anadirCartaMazo();
 
     // colS = std::stoi(a.substr(0, 1)) - 1;
+  } else if (a == "n") {
+    // this->verificarA();
   }
 }
 void Solitario::start() {
