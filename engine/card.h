@@ -18,6 +18,7 @@ public:
   Card(std::string);
   void setValue(std::string);
   void setFamily(std::string);
+  int valor;
   std::string getValue() const;
   std::string getFamily() const;
   ~Card();

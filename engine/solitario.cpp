@@ -33,13 +33,10 @@ Solitario::Solitario() : cantidad_cartas(52) {
  */
 void Solitario::check(int colS, int colM) {
   std::string cols, colm;
-  int cantPop = 0;
   // verificar que en vector tenga solo una carta , ya que si
   // tiene mas de una el jugador tiene varias opciones
 
-  if (this->aux_pilas[colS].size() > 1) {
-    cantPop = this->aux_pilas[colS].size() - 1;
-  }
+  int cantPop = this->aux_pilas[colS].size() - 1;
 
   // asigno el primer carta destapada en caso de haberla si no asigno el top de
   // la pila
@@ -53,7 +50,12 @@ void Solitario::check(int colS, int colM) {
       (cols != "false" && colm == "false"))
     return;
 
-  bool ok = this->pilas[colS]->top()->getFamily() ==
+  bool ok = this->aux_pilas[colS].size() > 1
+                ? this->aux_pilas[colS][0]->getFamily() ==
+                          this->pilas[colM]->top()->getFamily()
+                      ? true
+                      : false
+            : this->pilas[colS]->top()->getFamily() ==
                     this->pilas[colM]->top()->getFamily()
                 ? true
                 : false;
@@ -63,47 +65,45 @@ void Solitario::check(int colS, int colM) {
 
 #define iterarStack(cont) for (int i = 0; i <= cont; i++)
 
-  // this->aux_pilas[colS].pop_back();
-  // this->pilas[colM]->push(this->pilas[colS]->top());
+  std::cout << cols << "::" << colm << "::" << cantPop << std::endl;
 
   auto operation = [this, &colS, &colM, cantPop]() -> void {
-    // añadir a pila a mover
     if (!this->pilas[colS]->empty()) {
-      if (cantPop != 0) {
 
-        iterarStack(cantPop) {
-          this->aux_pilas[colM].push_back(this->aux_pilas[colS][i]);
-          this->pilas[colM]->push(this->aux_pilas[colS][i]);
-        }
+      iterarStack(cantPop) {
+        this->aux_pilas[colM].push_back(this->aux_pilas[colS][i]);
+        this->pilas[colM]->push(this->aux_pilas[colS][i]);
 
-      } else {
-        this->aux_pilas[colM].push_back(this->pilas[colS]->top());
-        this->pilas[colM]->push(this->pilas[colS]->top());
+        // this->aux_pilas[colS].pop_back();
+        this->pilas[colS]->pop();
+      }
+      this->aux_pilas[colS].clear();
+      if (!this->pilas[colS]->empty()) {
+        this->aux_pilas[colS].push_back(this->pilas[colS]->top());
       }
     }
 
     // pop del elemento en la pila seleccionada
-    if (!this->pilas[colS]->empty()) {
-      if (cantPop != 0) {
-        iterarStack(cantPop) { this->pilas[colS]->pop(); }
-      } else {
-        this->pilas[colS]->pop();
-      }
+    // if (!this->pilas[colS]->empty()) {
+    //   if (cantPop != 0) {
+    //     iterarStack(cantPop) { this->pilas[colS]->pop(); }
+    //   } else {
+    //     this->pilas[colS]->pop();
+    //   }
 
-      if (!this->aux_pilas[colS].empty()) {
-        if (cantPop != 0) {
-          iterarStack(cantPop) { this->aux_pilas[colS].pop_back(); }
-        } else {
-          this->aux_pilas[colS].pop_back();
-        }
-        if (!this->pilas[colS]->empty()) {
+    //   if (!this->aux_pilas[colS].empty()) {
+    //     if (cantPop != 0) {
+    //       iterarStack(cantPop) { this->aux_pilas[colS].pop_back(); }
+    //     } else {
+    //       this->aux_pilas[colS].pop_back();
+    //     }
+    //     if (!this->pilas[colS]->empty()) {
 
-          this->aux_pilas[colS].push_back(this->pilas[colS]->top());
-        }
-      }
-    }
+    //       this->aux_pilas[colS].push_back(this->pilas[colS]->top());
+    //     }
+    //   }
+    // }
   };
-  // std::cout << cols << " " << colm << std::endl;
 
   if (cols == "AS" && colm == "2 ") {
     operation();
@@ -131,8 +131,127 @@ void Solitario::check(int colS, int colM) {
     operation();
   }
 }
+void Solitario::verificarA() {
+  int pila;
+  std::string family;
+  int escaleraA;
+  for (int i = 0; i < 7; i++) {
+    pila = this->pilas[i]->top()->valor;
+    family = this->pilas[i]->top()->getFamily();
+
+    if (pila == 1 && family == "C" && this->escalerasA[0].empty()) {
+      this->escalerasA[0].push(this->pilas[i]->top());
+      this->pilas[i]->pop();
+      this->aux_pilas[i].pop_back();
+    } /* else if() */
+  }
+}
+
+bool verificarEscaleraA(int a, int b, std::string fA, std::string fB) {
+  if (fA == fB) {
+    if (a == 1 && b == 2) {
+      return true;
+    } else if (a == 2 && b == 3) {
+      return true;
+    } else if (a == 3 && b == 4) {
+      return true;
+    } else if (a == 4 && b == 5) {
+      return true;
+    } else if (a == 5 && b == 6) {
+      return true;
+    } else if (a == 6 && b == 7) {
+      return true;
+    } else if (a == 7 && b == 8) {
+      return true;
+    } else if (a == 8 && b == 9) {
+      return true;
+    } else if (a == 9 && b == 10) {
+      return true;
+    } else if (a == 10 && b == 11) {
+      return true;
+    } else if (a == 11 && b == 12) {
+      return true;
+    } else if (a == 12 && b == 12) {
+      return true;
+    }
+  }
+  return false;
+}
+
+bool verificarEscaleraD(int a, int b, std::string fA, std::string fB) {
+  if (fA != fB) {
+    if (a == 1 && b == 2) {
+      return true;
+    } else if (a == 2 && b == 3) {
+      return true;
+    } else if (a == 3 && b == 4) {
+      return true;
+    } else if (a == 4 && b == 5) {
+      return true;
+    } else if (a == 5 && b == 6) {
+      return true;
+    } else if (a == 6 && b == 7) {
+      return true;
+    } else if (a == 7 && b == 8) {
+      return true;
+    } else if (a == 8 && b == 9) {
+      return true;
+    } else if (a == 9 && b == 10) {
+      return true;
+    } else if (a == 10 && b == 11) {
+      return true;
+    } else if (a == 11 && b == 12) {
+      return true;
+    } else if (a == 12 && b == 12) {
+      return true;
+    }
+  }
+  return false;
+}
 
 void Solitario::mover(std::string &a) {
+  auto anadirCartaMazo = [this]() -> void {
+    auto anadir = [this](int i, int b) -> bool {
+      for (int w = 0; w < 7; w++) {
+        std::cout << "en mover" << std::endl;
+        // std::cout << this->sobrantes[i].top()->valor << " "
+        // << this->pilas[w]->top()->valor << std::endl;
+        if (this->pilas[w]->empty() && this->sobrantes[i].top()->valor == 13) {
+          this->pilas[w]->push(this->sobrantes[i].top());
+          this->aux_pilas[w].push_back(this->sobrantes[i].top());
+          this->sobrantes[i].pop();
+        } else if (this->pilas[w]->empty()) {
+          continue;
+        }
+
+        if (verificarEscaleraD(this->sobrantes[i].top()->valor,
+                               this->pilas[w]->top()->valor,
+                               this->sobrantes[i].top()->getFamily(),
+                               this->pilas[w]->top()->getFamily())) {
+          this->pilas[w]->push(this->sobrantes[i].top());
+          this->aux_pilas[w].push_back(this->sobrantes[i].top());
+          this->sobrantes[i].pop();
+          return true;
+        }
+      }
+      return false;
+    };
+    bool ok;
+    if (this->sobrantes[0].size() < this->sobrantes[1].size()) {
+      ok = anadir(1, 0);
+      if (!ok) {
+        this->sobrantes[0].push(this->sobrantes[1].top());
+        this->sobrantes[1].pop();
+      }
+    } else if (this->sobrantes[1].size() < this->sobrantes[0].size()) {
+      ok = anadir(0, 1);
+      if (!ok) {
+        this->sobrantes[1].push(this->sobrantes[0].top());
+        this->sobrantes[0].pop();
+      }
+    }
+  };
+
   int colS, colM;
   if (a.size() == 3) {
     colS = std::stoi(a.substr(0, 1)) - 1;
@@ -140,8 +259,12 @@ void Solitario::mover(std::string &a) {
 
     // realiza la operatciones correspondiente
     this->check(colS, colM);
+    // this->mostrarSobranteTop = false;
   } else if (a == "y" or a == "n") {
-    this->mostrarSobranteTop = a == "y" ? true : false;
+    // this->mostrarSobranteTop = a == "y" ? true : false;
+    anadirCartaMazo();
+
+    // colS = std::stoi(a.substr(0, 1)) - 1;
   }
 }
 void Solitario::start() {
@@ -153,6 +276,7 @@ void Solitario::start() {
     std::cout
         << "(columna seleccionada)-(columna a mover). ej.`7-1` or `y/n` = ";
     std::cin >> a;
+
     this->mover(a);
     // std::cout << a << std::endl;
     std::cout << "0) Salir" << std::endl << "1) Continuar" << std::endl;
@@ -194,58 +318,72 @@ void Solitario::initialize() {
       case 1:
         this->card[cont].setValue("AS");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 1;
         break;
       case 2:
         this->card[cont].setValue("2 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 2;
         break;
       case 3:
         this->card[cont].setValue("3 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 3;
         break;
       case 4:
         this->card[cont].setValue("4 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 4;
         break;
       case 5:
         this->card[cont].setValue("5 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 5;
         break;
       case 6:
         this->card[cont].setValue("6 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 6;
         break;
       case 7:
         this->card[cont].setValue("7 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 7;
         break;
       case 8:
         this->card[cont].setValue("8 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 8;
         break;
       case 9:
         this->card[cont].setValue("9 ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 9;
         break;
       case 10:
         this->card[cont].setValue("10");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 10;
         break;
       case 11:
         this->card[cont].setValue("J ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 11;
         break;
       case 12:
         this->card[cont].setValue("Q ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 12;
         break;
       case 13:
         this->card[cont].setValue("K ");
         this->card[cont].setFamily(familia);
+        this->card[cont].valor = 13;
         break;
       default:
         this->card[cont].setValue("ningun");
         this->card[cont].setFamily("ningun");
+        this->card[cont].valor = -1;
         break;
       }
     }
@@ -386,26 +524,32 @@ void Solitario::random() {
 }
 
 void Solitario::tablero() {
-  std::string space = "       ";
+  std::string space = " ";
   std::string space_ = "      ";
-  std::string x = space_ + "x";
-  std::string a;
+  std::string x = space + "  x " + space;
   // std::cout << i << std::endl;
+  int i = 1;
   for (auto arr : this->aux_pilas) {
+    std::cout << i << ")";
     for (auto elementos : arr) {
       std::cout << " " << elementos->getFamily() << " " << elementos->getValue()
                 << " ";
     }
+
+    i++;
     std::cout << std::endl;
   }
 
   // mazo sobrante
+
   std::cout << std::endl;
-  if (this->sobrantes[0].empty() && this->mostrarSobranteTop) {
-    std::cout << "mazo Sobrante :" << this->sobrantes[1].top()->getFamily()
+  // std::cout << "si hay una carta del mazo que quiere presionar `n`"
+  // << std::endl;
+  if (this->sobrantes[0].size() < this->sobrantes[1].size()) {
+    std::cout << "carta del mazo:" << this->sobrantes[1].top()->getFamily()
               << " " << this->sobrantes[1].top()->getValue() << std::endl;
-  } else if (this->sobrantes[1].empty() && this->mostrarSobranteTop) {
-    std::cout << "mazo Sobrante :" << this->sobrantes[0].top()->getFamily()
+  } else if (this->sobrantes[1].size() < this->sobrantes[0].size()) {
+    std::cout << "carta del mazo :" << this->sobrantes[0].top()->getFamily()
               << " " << this->sobrantes[0].top()->getValue() << std::endl;
   }
 
@@ -536,4 +680,42 @@ Solitario::~Solitario() { delete[] card; }
 //   J,
 //   Q,
 //   K
+// };
+
+// auto operation = [this, &colS, &colM, cantPop]() -> void {
+//   // añadir a pila a mover
+//   if (!this->pilas[colS]->empty()) {
+//     if (cantPop != 0) {
+
+//       iterarStack(cantPop) {
+//         this->aux_pilas[colM].push_back(this->aux_pilas[colS][i]);
+//         this->pilas[colM]->push(this->aux_pilas[colS][i]);
+//       }
+
+//     } else {
+//       this->aux_pilas[colM].push_back(this->pilas[colS]->top());
+//       this->pilas[colM]->push(this->pilas[colS]->top());
+//     }
+//   }
+
+//   // pop del elemento en la pila seleccionada
+//   if (!this->pilas[colS]->empty()) {
+//     if (cantPop != 0) {
+//       iterarStack(cantPop) { this->pilas[colS]->pop(); }
+//     } else {
+//       this->pilas[colS]->pop();
+//     }
+
+//     if (!this->aux_pilas[colS].empty()) {
+//       if (cantPop != 0) {
+//         iterarStack(cantPop) { this->aux_pilas[colS].pop_back(); }
+//       } else {
+//         this->aux_pilas[colS].pop_back();
+//       }
+//       if (!this->pilas[colS]->empty()) {
+
+//         this->aux_pilas[colS].push_back(this->pilas[colS]->top());
+//       }
+//     }
+//   }
 // };
