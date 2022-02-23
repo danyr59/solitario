@@ -430,7 +430,7 @@ void Solitario::tablero() {
   std::cout << "Presionar `s` para salir" << std::endl;
 
   std::cout << "desea pedir una carta de la mano? (y/n)" << std::endl;
-  std::cout << "(columna seleccionada)-(columna a mover). ej.`7-1` or `y/n` = ";
+  std::cout << "(fila seleccionada)-(fila a mover). ej.`7-1` or `y/n` = ";
 }
 
 /**
