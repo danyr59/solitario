@@ -239,12 +239,14 @@ void Solitario::mover(std::string &a) {
     };
     bool ok;
     if (this->sobrantes[0].size() < this->sobrantes[1].size()) {
+      std::cout << "en uno" << std::endl;
       ok = anadir(1, 0);
       if (!ok) {
         this->sobrantes[0].push(this->sobrantes[1].top());
         this->sobrantes[1].pop();
       }
     } else if (this->sobrantes[1].size() < this->sobrantes[0].size()) {
+      // std::cout << "en dos" << std::endl;
       ok = anadir(0, 1);
       if (!ok) {
         this->sobrantes[1].push(this->sobrantes[0].top());
