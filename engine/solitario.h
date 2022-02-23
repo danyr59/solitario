@@ -46,14 +46,17 @@ protected:
   std::stack<Card *> escalerasA[4];
   // necesito crear las escaleras
   // por lo tanto neceito 7 pilas
+
+  bool estadoMazo = false;
+
 public:
   Solitario();
   void initialize();
   int start();
-  void check(int colS, int colM);
-  void verificarA();
+  void VerificarEscaleras(int colS, int colM);
   int mover(std::string &);
   void reset();
+  void verificacionCartaMazo();
   void tablero();
   void random();
   ~Solitario();

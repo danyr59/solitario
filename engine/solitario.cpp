@@ -11,11 +11,13 @@
 #include <utility>
 #include <vector>
 #define IMPRESION_ESCALERA
+
+static int m;
+// static int mazo_aux;
 /**
  * @function Solitario
- * @param {type: int , name: cantidad} -> cantidad de cartas en el juego
+ * @param none
  * @make constructor
- * @return void
  *
  */
 
@@ -27,10 +29,35 @@ Solitario::Solitario() : cantidad_cartas(52) {
 /**
  * @function Solitario::Start
  * @make empieza el juego , cuando el usuario lo desee
+ * @return int -> EXIT
+ *
+ */
+int Solitario::start() {
+  bool ok = true;
+  int exit;
+  std::string a;
+  do {
+    this->tablero();
+
+    std::cin >> a;
+
+    exit = this->mover(a);
+    if (exit == 1) {
+      ok = false;
+    }
+
+  } while (ok);
+  return exit;
+}
+
+/**
+ * @function Solitario::VerificarEscaleras
+ * @make hace la verificacion de las operaciones correpondientes entre escaleras
+ * o stacks
  * @return void
  *
  */
-void Solitario::check(int colS, int colM) {
+void Solitario::VerificarEscaleras(int colS, int colM) {
   std::string cols, colm;
   // verificar que en vector tenga solo una carta , ya que si
   // tiene mas de una el jugador tiene varias opciones
@@ -64,7 +91,7 @@ void Solitario::check(int colS, int colM) {
 
 #define iterarStack(cont) for (int i = 0; i <= cont; i++)
 
-  std::cout << cols << "::" << colm << "::" << cantPop << std::endl;
+  // std::cout << cols << "::" << colm << "::" << cantPop << std::endl;
 
   auto operation = [this, &colS, &colM, cantPop]() -> void {
     if (!this->pilas[colS]->empty()) {
@@ -109,53 +136,6 @@ void Solitario::check(int colS, int colM) {
     operation();
   }
 }
-void Solitario::verificarA() {
-  int pila;
-  std::string family;
-  int escaleraA;
-  for (int i = 0; i < 7; i++) {
-    pila = !this->pilas[i]->empty() ? this->pilas[i]->top()->valor : -1;
-    family =
-        !this->pilas[i]->empty() ? this->pilas[i]->top()->getFamily() : "-1";
-
-    if (pila == 1 && family == "C" && this->escalerasA[0].empty()) {
-      this->escalerasA[0].push(this->pilas[i]->top());
-      this->pilas[i]->pop();
-      this->aux_pilas[i].pop_back();
-    } /* else if() */
-  }
-}
-
-bool verificarEscaleraA(int a, int b, std::string fA, std::string fB) {
-  if (fA == fB) {
-    if (a == 1 && b == 2) {
-      return true;
-    } else if (a == 2 && b == 3) {
-      return true;
-    } else if (a == 3 && b == 4) {
-      return true;
-    } else if (a == 4 && b == 5) {
-      return true;
-    } else if (a == 5 && b == 6) {
-      return true;
-    } else if (a == 6 && b == 7) {
-      return true;
-    } else if (a == 7 && b == 8) {
-      return true;
-    } else if (a == 8 && b == 9) {
-      return true;
-    } else if (a == 9 && b == 10) {
-      return true;
-    } else if (a == 10 && b == 11) {
-      return true;
-    } else if (a == 11 && b == 12) {
-      return true;
-    } else if (a == 12 && b == 12) {
-      return true;
-    }
-  }
-  return false;
-}
 
 bool verificarEscaleraD(int a, int b, std::string fA, std::string fB) {
   if (fA != fB) {
@@ -188,53 +168,89 @@ bool verificarEscaleraD(int a, int b, std::string fA, std::string fB) {
   return false;
 }
 
-int Solitario::mover(std::string &a) {
-  auto anadirCartaMazo = [this]() -> void {
-    auto anadir = [this](int i, int b) -> bool {
-      for (int w = 0; w < 7; w++) {
-        std::cout << "en mover" << std::endl;
+/**
+ * @function Solitario::verificacionCartaMazo
+ * @make  realiza la verificacion y cambio cuando se pide una carta del mazo,
+ * de no haber una carta con la que sea compatible , se depositara en una
+ * pila secundaria
+ * @return void
+ *
+ */
 
-        if (this->pilas[w]->empty() && this->sobrantes[i].top()->valor == 13) {
-          this->pilas[w]->push(this->sobrantes[i].top());
-          this->aux_pilas[w].push_back(this->sobrantes[i].top());
-          this->sobrantes[i].pop();
-        } else if (this->pilas[w]->empty()) {
-          continue;
-        }
+void Solitario::verificacionCartaMazo() {
+  auto anadir = [this](int i, int b) -> bool {
+    for (int w = 0; w < 7; w++) {
+      // std::cout << "en mover" << std::endl;
 
-        if (verificarEscaleraD(this->sobrantes[i].top()->valor,
-                               this->pilas[w]->top()->valor,
-                               this->sobrantes[i].top()->getFamily(),
-                               this->pilas[w]->top()->getFamily())) {
-          this->pilas[w]->push(this->sobrantes[i].top());
-          this->aux_pilas[w].push_back(this->sobrantes[i].top());
-          this->sobrantes[i].pop();
-          return true;
-        }
+      if (this->pilas[w]->empty() && this->sobrantes[i].top()->valor == 13) {
+        this->pilas[w]->push(this->sobrantes[i].top());
+        this->aux_pilas[w].push_back(this->sobrantes[i].top());
+        this->sobrantes[i].pop();
+      } else if (this->pilas[w]->empty()) {
+        continue;
       }
-      return false;
-    };
-    bool ok;
-    if (this->sobrantes[0].size() < this->sobrantes[1].size()) {
-      std::cout << "en uno" << std::endl;
-      ok = anadir(1, 0);
-      if (!ok) {
-        this->sobrantes[0].push(this->sobrantes[1].top());
-        this->sobrantes[1].pop();
-      }
-    } else if (this->sobrantes[1].size() < this->sobrantes[0].size()) {
-      ok = anadir(0, 1);
-      if (!ok) {
-        this->sobrantes[1].push(this->sobrantes[0].top());
-        this->sobrantes[0].pop();
+
+      if (verificarEscaleraD(this->sobrantes[i].top()->valor,
+                             this->pilas[w]->top()->valor,
+                             this->sobrantes[i].top()->getFamily(),
+                             this->pilas[w]->top()->getFamily())) {
+        this->pilas[w]->push(this->sobrantes[i].top());
+        this->aux_pilas[w].push_back(this->sobrantes[i].top());
+        this->sobrantes[i].pop();
+        return true;
       }
     }
+    return false;
   };
+
+  if (this->sobrantes[1].empty() && this->sobrantes[0].empty())
+    return;
+
+  bool ok;
+  if (this->estadoMazo && m != 0) {
+    std::cout << "en uno" << std::endl;
+    ok = anadir(1, 0);
+    if (!ok) {
+      this->sobrantes[0].push(this->sobrantes[1].top());
+      this->sobrantes[1].pop();
+    }
+    m--;
+  } else if (m != 0) {
+    std::cout << "en dos" << std::endl;
+    ok = anadir(0, 1);
+    if (!ok) {
+      this->sobrantes[1].push(this->sobrantes[0].top());
+      this->sobrantes[0].pop();
+    }
+    m--;
+  }
+
+  if (this->sobrantes[1].empty()) {
+    this->estadoMazo = false;
+    m = this->sobrantes[0].size();
+
+  } else if (this->sobrantes[0].empty()) {
+    this->estadoMazo = true;
+    m = this->sobrantes[1].size();
+  }
+}
+
+;
+
+/**
+ * @function Solitario::mover
+ * @make  hace la administracion de los eventos
+ * @return void
+ *
+ */
+
+int Solitario::mover(std::string &a) {
 
   int colS, colM;
   for (auto pilas : aux_pilas) {
     if (pilas.size() == 13) {
       std::cout << "HAZ GANADO!" << std::endl;
+      return 1;
     }
   }
 
@@ -242,10 +258,9 @@ int Solitario::mover(std::string &a) {
     colS = std::stoi(a.substr(0, 1)) - 1;
     colM = std::stoi(a.substr(2, 3)) - 1;
 
-    // realiza la operatciones correspondiente
-    this->check(colS, colM);
+    this->VerificarEscaleras(colS, colM);
   } else if (a == "y") {
-    anadirCartaMazo();
+    this->verificacionCartaMazo();
 
   } else if (a == "n") {
     // this->verificarA();
@@ -254,35 +269,19 @@ int Solitario::mover(std::string &a) {
   }
   return 0;
 }
-int Solitario::start() {
-  bool ok = true;
-  int exit;
-  std::string a;
-  do {
-    this->tablero();
-
-    std::cin >> a;
-
-    exit = this->mover(a);
-    if (exit == 1) {
-      ok = false;
-    }
-
-  } while (ok);
-  return exit;
-}
 
 /**
- * @function Solitario::Start
- * @make empieza el juego , cuando el usuario lo desee
+ * @function Solitario::reset
+ * @make  hace un reset
  * @return void
  *
  */
+
 void Solitario::reset() { this->initialize(); }
 
 /**
- * @function Solitario::Start
- * @make empieza el juego , cuando el usuario lo desee
+ * @function Solitario::initialize
+ * @make  inicializa las memoria dinamica de cartas
  * @return void
  *
  */
@@ -318,6 +317,15 @@ void Solitario::initialize() {
 
   this->random();
 }
+
+/**
+ * @function Solitario::random
+ * @make  inicializa las pilas (escaleras del juego) con los elementos random
+ * (memoria)
+ * @return void
+ *
+ */
+
 void Solitario::random() {
   std::set<int> datos;
   std::vector<int> datos_desordenados;
@@ -379,6 +387,13 @@ void Solitario::random() {
   }
 }
 
+/**
+ * @function Solitario::tablero
+ * @make  representa el tablero por consola
+ * @return void
+ *
+ */
+
 void Solitario::tablero() {
   std::string space = " ";
   std::string space_ = "      ";
@@ -398,19 +413,25 @@ void Solitario::tablero() {
   // mazo sobrante
 
   std::cout << std::endl;
-  // std::cout << "si hay una carta del mazo que quiere presionar `n`"
-  if (this->sobrantes[0].size() < this->sobrantes[1].size()) {
+  if (this->estadoMazo && m != 0) {
     std::cout << "carta del mazo:" << this->sobrantes[1].top()->getFamily()
               << " " << this->sobrantes[1].top()->getValue() << std::endl;
-  } else if (this->sobrantes[1].size() < this->sobrantes[0].size()) {
+  } else if (m != 0) {
     std::cout << "carta del mazo :" << this->sobrantes[0].top()->getFamily()
               << " " << this->sobrantes[0].top()->getValue() << std::endl;
+    // std::cout << "si hay una carta del mazo que quiere presionar `n`"
   }
-
   std::cout << "Presionar `s` para salir" << std::endl;
 
   std::cout << "desea pedir una carta de la mano? (y/n)" << std::endl;
   std::cout << "(columna seleccionada)-(columna a mover). ej.`7-1` or `y/n` = ";
 }
+
+/**
+ * @function Solitario::~Solitario
+ * @make  elimina memoria dinamica del juego
+ * @return void
+ *
+ */
 
 Solitario::~Solitario() { delete[] card; }
