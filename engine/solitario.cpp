@@ -22,7 +22,6 @@
 Solitario::Solitario() : cantidad_cartas(52) {
   this->card = new Card[this->cantidad_cartas];
   this->initialize();
-  // this->aux_pilas.resize(7);
 }
 
 /**
@@ -82,27 +81,6 @@ void Solitario::check(int colS, int colM) {
         this->aux_pilas[colS].push_back(this->pilas[colS]->top());
       }
     }
-
-    // pop del elemento en la pila seleccionada
-    // if (!this->pilas[colS]->empty()) {
-    //   if (cantPop != 0) {
-    //     iterarStack(cantPop) { this->pilas[colS]->pop(); }
-    //   } else {
-    //     this->pilas[colS]->pop();
-    //   }
-
-    //   if (!this->aux_pilas[colS].empty()) {
-    //     if (cantPop != 0) {
-    //       iterarStack(cantPop) { this->aux_pilas[colS].pop_back(); }
-    //     } else {
-    //       this->aux_pilas[colS].pop_back();
-    //     }
-    //     if (!this->pilas[colS]->empty()) {
-
-    //       this->aux_pilas[colS].push_back(this->pilas[colS]->top());
-    //     }
-    //   }
-    // }
   };
 
   if (cols == "AS" && colm == "2 ") {
@@ -203,20 +181,19 @@ bool verificarEscaleraD(int a, int b, std::string fA, std::string fB) {
       return true;
     } else if (a == 11 && b == 12) {
       return true;
-    } else if (a == 12 && b == 12) {
+    } else if (a == 12 && b == 13) {
       return true;
     }
   }
   return false;
 }
 
-void Solitario::mover(std::string &a) {
+int Solitario::mover(std::string &a) {
   auto anadirCartaMazo = [this]() -> void {
     auto anadir = [this](int i, int b) -> bool {
       for (int w = 0; w < 7; w++) {
         std::cout << "en mover" << std::endl;
-        // std::cout << this->sobrantes[i].top()->valor << " "
-        // << this->pilas[w]->top()->valor << std::endl;
+
         if (this->pilas[w]->empty() && this->sobrantes[i].top()->valor == 13) {
           this->pilas[w]->push(this->sobrantes[i].top());
           this->aux_pilas[w].push_back(this->sobrantes[i].top());
@@ -246,7 +223,6 @@ void Solitario::mover(std::string &a) {
         this->sobrantes[1].pop();
       }
     } else if (this->sobrantes[1].size() < this->sobrantes[0].size()) {
-      // std::cout << "en dos" << std::endl;
       ok = anadir(0, 1);
       if (!ok) {
         this->sobrantes[1].push(this->sobrantes[0].top());
@@ -268,32 +244,32 @@ void Solitario::mover(std::string &a) {
 
     // realiza la operatciones correspondiente
     this->check(colS, colM);
-    // this->mostrarSobranteTop = false;
   } else if (a == "y") {
-    // this->mostrarSobranteTop = a == "y" ? true : false;
     anadirCartaMazo();
 
-    // colS = std::stoi(a.substr(0, 1)) - 1;
   } else if (a == "n") {
     // this->verificarA();
+  } else if (a == "s") {
+    return 1;
   }
+  return 0;
 }
-void Solitario::start() {
+int Solitario::start() {
   bool ok = true;
+  int exit;
   std::string a;
   do {
     this->tablero();
-    std::cout << "desea pedir una carta de la mano? (y/n)" << std::endl;
-    std::cout
-        << "(columna seleccionada)-(columna a mover). ej.`7-1` or `y/n` = ";
+
     std::cin >> a;
 
-    this->mover(a);
-    // std::cout << a << std::endl;
-    std::cout << "0) Salir" << std::endl << "1) Continuar" << std::endl;
-    std::cin >> ok;
+    exit = this->mover(a);
+    if (exit == 1) {
+      ok = false;
+    }
 
   } while (ok);
+  return exit;
 }
 
 /**
@@ -311,156 +287,36 @@ void Solitario::reset() { this->initialize(); }
  *
  */
 void Solitario::initialize() {
-  std::string familia;
-  int cont = 0;
-  for (int j = 1; j <= 4; j++) {
-    if (j == 1) {
-      familia = "T";
-    } else if (j == 2) {
-      familia = "D";
-    } else if (j == 3) {
-      familia = "C";
-    } else if (j == 4) {
-      familia = "P";
-    }
-    for (int i = 1; i <= this->cantidad_cartas / 4; i++, cont++) {
-      // std::cout << cont << std::endl;
-      switch (i) {
-      case 1:
-        this->card[cont].setValue("AS");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 1;
-        break;
-      case 2:
-        this->card[cont].setValue("2 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 2;
-        break;
-      case 3:
-        this->card[cont].setValue("3 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 3;
-        break;
-      case 4:
-        this->card[cont].setValue("4 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 4;
-        break;
-      case 5:
-        this->card[cont].setValue("5 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 5;
-        break;
-      case 6:
-        this->card[cont].setValue("6 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 6;
-        break;
-      case 7:
-        this->card[cont].setValue("7 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 7;
-        break;
-      case 8:
-        this->card[cont].setValue("8 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 8;
-        break;
-      case 9:
-        this->card[cont].setValue("9 ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 9;
-        break;
-      case 10:
-        this->card[cont].setValue("10");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 10;
-        break;
-      case 11:
-        this->card[cont].setValue("J ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 11;
-        break;
-      case 12:
-        this->card[cont].setValue("Q ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 12;
-        break;
-      case 13:
-        this->card[cont].setValue("K ");
-        this->card[cont].setFamily(familia);
-        this->card[cont].valor = 13;
-        break;
-      default:
-        this->card[cont].setValue("ningun");
-        this->card[cont].setFamily("ningun");
-        this->card[cont].valor = -1;
-        break;
-      }
-    }
-  }
-  this->random();
-}
-void Solitario::debug() {
-#ifdef IMPRESION_ESCALERA
+  std::vector<Card> mazo = {
+      {"AS", "T", "1"},  {"2 ", "T", "2"},  {"3 ", "T", "3"},
+      {"4 ", "T", "4"},  {"5 ", "T", "5"},  {"6 ", "T", "6"},
+      {"7 ", "T", "7"},  {"8 ", "T", "8"},  {"9 ", "T", "9"},
+      {"10", "T", "10"}, {"J ", "T", "11"}, {"Q ", "T", "12"},
+      {"K ", "T", "13"}, {"AS", "P", "1"},  {"2 ", "P", "2"},
+      {"3 ", "P", "3"},  {"4 ", "P", "4"},  {"5 ", "P", "5"},
+      {"6 ", "P", "6"},  {"7 ", "P", "7"},  {"8 ", "P", "8"},
+      {"9 ", "P", "9"},  {"10", "P", "10"}, {"J ", "P", "11"},
+      {"Q ", "P", "12"}, {"K ", "P", "13"}, {"AS", "D", "1"},
+      {"2 ", "D", "2"},  {"3 ", "D", "3"},  {"4 ", "D", "4"},
+      {"5 ", "D", "5"},  {"6 ", "D", "6"},  {"7 ", "D", "7"},
+      {"8 ", "D", "8"},  {"9 ", "D", "9"},  {"10", "D", "10"},
+      {"J ", "D", "11"}, {"Q ", "D", "12"}, {"K ", "D", "13"},
+      {"AS", "C", "1"},  {"2 ", "C", "2"},  {"3 ", "C", "3"},
+      {"4 ", "C", "4"},  {"5 ", "C", "5"},  {"6 ", "C", "6"},
+      {"7 ", "C", "7"},  {"8 ", "C", "8"},  {"9 ", "C", "9"},
+      {"10", "C", "10"}, {"J ", "C", "11"}, {"Q ", "C", "12"},
+      {"K ", "C", "13"}};
 
-  std::cout << "escalera7" << std::endl;
-  for (int i = 0; i < 7; i++) {
-    std::cout << this->escalera7.top()->getValue() << " "
-              << this->escalera7.top()->getFamily() << std::endl;
-    this->escalera7.pop();
+  int i = 0;
+  for (auto card : mazo) {
+    this->card[i] = card;
+    i++;
   }
-
-  std::cout << std::endl << "escalera6" << std::endl;
-  for (int i = 0; i < 6; i++) {
-    std::cout << this->escalera6.top()->getValue()
-              << this->escalera6.top()->getFamily() << std::endl;
-    this->escalera6.pop();
-  }
-
-  std::cout << std::endl << "escalera5" << std::endl;
-  for (int i = 0; i < 5; i++) {
-    std::cout << this->escalera5.top()->getValue()
-              << this->escalera5.top()->getFamily() << std::endl;
-    this->escalera5.pop();
-  }
-  std::cout << std::endl << "escalera4" << std::endl;
-  for (int i = 0; i < 4; i++) {
-    std::cout << this->escalera4.top()->getValue()
-              << this->escalera4.top()->getFamily() << std::endl;
-    this->escalera4.pop();
-  }
-  std::cout << std::endl << "escalera3" << std::endl;
-  for (int i = 0; i < 3; i++) {
-    std::cout << this->escalera3.top()->getValue()
-              << this->escalera3.top()->getFamily() << std::endl;
-    this->escalera3.pop();
-  }
-  std::cout << std::endl << "escalera2" << std::endl;
-  for (int i = 0; i < 2; i++) {
-    std::cout << this->escalera2.top()->getValue()
-              << this->escalera2.top()->getFamily() << std::endl;
-    this->escalera2.pop();
-  }
-  std::cout << std::endl << "escalera1" << std::endl;
-  for (int i = 0; i < 1; i++) {
-    std::cout << this->escalera1.top()->getValue()
-              << this->escalera1.top()->getFamily() << std::endl;
-    this->escalera1.pop();
-  }
-  std::cout << std::endl << "resto" << std::endl;
-  for (int i = 0; i < 24; i++) {
-    std::cout << this->sobrantes[0].top()->getValue()
-              << this->sobrantes[0].top()->getFamily() << std::endl;
-    this->sobrantes[0].pop();
-  }
-
-#endif // IMPRESION_ESCALERA
-
-  // for (int i = 0; i < 52; i++) {
-  //   std::cout << this->card[i].getValue() << std::endl;
-  //   std::cout << this->card[i].getFamily() << std::endl << std::endl;
+  // for (int w = 0; w < 52; w++) {
+  //   std::cout << this->card[w] << std::endl;
   // }
+
+  this->random();
 }
 void Solitario::random() {
   std::set<int> datos;
@@ -476,9 +332,7 @@ void Solitario::random() {
     if (ok) {
       datos.insert(num);
       datos_desordenados.insert(datos_desordenados.begin(), num);
-      // std::cout << num << std::endl;
     }
-    // std::tie(ok, std::ignore) == datos.insert(num);
   } while (datos.size() < 52);
 
   // llenando las escaleras
@@ -509,14 +363,7 @@ void Solitario::random() {
     if (i >= 28) {
       this->sobrantes[0].push(&card[datos_desordenados[i]]);
     }
-    // datos_desordenados[i];
   }
-  // for (auto posiciones : datos) {
-  //   std::cout << posiciones << std::endl;
-  // }
-  // for (int n = 0; n < 10; n++) {
-  //   std::cout << distr(eng) << std::endl;
-  // }
 
   this->pilas[0] = &this->escalera1;
   this->pilas[1] = &this->escalera2;
@@ -527,18 +374,15 @@ void Solitario::random() {
   this->pilas[5] = &this->escalera6;
   this->pilas[6] = &this->escalera7;
 
-  // std::vector<Card *> cardTop;
   for (int i = 0; i < 7; i++) {
     this->aux_pilas[i].push_back(this->pilas[i]->top());
   }
-  // luego llenamos las escaleras
 }
 
 void Solitario::tablero() {
   std::string space = " ";
   std::string space_ = "      ";
   std::string x = space + "  x " + space;
-  // std::cout << i << std::endl;
   int i = 1;
   for (auto arr : this->aux_pilas) {
     std::cout << i << ")";
@@ -555,7 +399,6 @@ void Solitario::tablero() {
 
   std::cout << std::endl;
   // std::cout << "si hay una carta del mazo que quiere presionar `n`"
-  // << std::endl;
   if (this->sobrantes[0].size() < this->sobrantes[1].size()) {
     std::cout << "carta del mazo:" << this->sobrantes[1].top()->getFamily()
               << " " << this->sobrantes[1].top()->getValue() << std::endl;
@@ -564,169 +407,10 @@ void Solitario::tablero() {
               << " " << this->sobrantes[0].top()->getValue() << std::endl;
   }
 
-  // a = i == 1 ? !this->escalera1.empty()
-  //                  ? this->escalera1.top()->getFamily() + " " +
-  //                        this->escalera1.top()->getValue() + x + x + x + x
-  //                        + x + x
-  //                  : "x  " + x + x + x + x + x + x
-  //     : i == 2
-  //         ? !this->escalera2.empty()
-  //               ? space + this->escalera2.top()->getFamily() + " " +
-  //                     this->escalera2.top()->getValue() + x + x + x + x + x
-  //               : "x  " + x + x + x + x + x
-  //     : i == 3
-  //         ? !this->escalera3.empty()
-  //               ? space + space + this->escalera3.top()->getFamily() + " "
-  //               +
-  //                     this->escalera3.top()->getValue() + x + x + x + x
-  //               : "x  " + x + x + x + x
-  //     : i == 4
-  //         ? !this->escalera4.empty()
-  //               ? space + space + space +
-  //               this->escalera4.top()->getFamily() +
-  //                     " " + this->escalera4.top()->getValue() + x + x + x
-  //               : "x  " + x + x + x
-  //     : i == 5 ? !this->escalera5.empty()
-  //                    ? space + space + space + space +
-  //                          this->escalera5.top()->getFamily() + " " +
-  //                          this->escalera5.top()->getValue() + x + x
-  //                    : "x  " + x + x
+  std::cout << "Presionar `s` para salir" << std::endl;
 
-  //     : i == 6 ? !this->escalera6.empty()
-  //                    ? space + space + space + space + space +
-  //                          this->escalera6.top()->getFamily() + " " +
-  //                          this->escalera6.top()->getValue() + x
-  //                    : "x  " + x
-
-  //     : i == 7 ? !this->escalera7.empty()
-  //                    ? space + space + space + space + space + space +
-  //                          this->escalera7.top()->getFamily() + " " +
-  //                          this->escalera7.top()->getValue()
-  //                    : "x  "
-  //              : "";
-
-  // std::cout << a << std::endl;
-  // }
+  std::cout << "desea pedir una carta de la mano? (y/n)" << std::endl;
+  std::cout << "(columna seleccionada)-(columna a mover). ej.`7-1` or `y/n` = ";
 }
 
 Solitario::~Solitario() { delete[] card; }
-
-// static const treboles All[] = {treboles::AS, treboles::DOS,
-// treboles::TRES}; enum class diamantes {
-//   AS = 1,
-//   DOS,
-//   TRES,
-//   CUATRO,
-//   CINCO,
-//   SEIS,
-//   SIETE,
-//   OCHO,
-//   NUEVE,
-//   DIEZ,
-//   J,
-//   Q,
-//   K
-// };
-// enum class corazones {
-//   AS = 1,
-//   DOS,
-//   TRES,
-//   CUATRO,
-//   CINCO,
-//   SEIS,
-//   SIETE,
-//   OCHO,
-//   NUEVE,
-//   DIEZ,
-//   J,
-//   Q,
-//   K
-// };
-// enum class picas {
-//   AS = 1,
-//   DOS,
-//   TRES,
-//   CUATRO,
-//   CINCO,
-//   SEIS,
-//   SIETE,
-//   OCHO,
-//   NUEVE,
-//   DIEZ,
-//   J,
-//   Q,
-//   K
-// };
-
-// namespace Mazo {
-// const char *names[] = {"AS", "2", "3",  "4", "5", "6", "7",
-//                        "8",  "9", "10", "J", "Q", "K"};
-// enum num : int {
-//   AS = 0,
-//   DOS,
-//   TRES,
-//   CUATRO,
-//   CINCO,
-//   SEIS,
-//   SIETE,
-//   OCHO,
-//   NUEVE,
-//   DIEZ,
-//   J,
-//   Q,
-//   K
-// };
-// } // namespace Mazo
-// enum num : int {
-//   AS = 0,
-//   DOS,
-//   TRES,
-//   CUATRO,
-//   CINCO,
-//   SEIS,
-//   SIETE,
-//   OCHO,
-//   NUEVE,
-//   DIEZ,
-//   J,
-//   Q,
-//   K
-// };
-
-// auto operation = [this, &colS, &colM, cantPop]() -> void {
-//   // añadir a pila a mover
-//   if (!this->pilas[colS]->empty()) {
-//     if (cantPop != 0) {
-
-//       iterarStack(cantPop) {
-//         this->aux_pilas[colM].push_back(this->aux_pilas[colS][i]);
-//         this->pilas[colM]->push(this->aux_pilas[colS][i]);
-//       }
-
-//     } else {
-//       this->aux_pilas[colM].push_back(this->pilas[colS]->top());
-//       this->pilas[colM]->push(this->pilas[colS]->top());
-//     }
-//   }
-
-//   // pop del elemento en la pila seleccionada
-//   if (!this->pilas[colS]->empty()) {
-//     if (cantPop != 0) {
-//       iterarStack(cantPop) { this->pilas[colS]->pop(); }
-//     } else {
-//       this->pilas[colS]->pop();
-//     }
-
-//     if (!this->aux_pilas[colS].empty()) {
-//       if (cantPop != 0) {
-//         iterarStack(cantPop) { this->aux_pilas[colS].pop_back(); }
-//       } else {
-//         this->aux_pilas[colS].pop_back();
-//       }
-//       if (!this->pilas[colS]->empty()) {
-
-//         this->aux_pilas[colS].push_back(this->pilas[colS]->top());
-//       }
-//     }
-//   }
-// };

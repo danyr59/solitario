@@ -7,9 +7,9 @@
 int main(void) {
   Solitario a;
   // a.debug();
-  a.start();
+
   // a.tablero();
   // a.random();
 
-  return 0;
+  return a.start();
 }
