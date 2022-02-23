@@ -1,0 +1,48 @@
+Reglas Generales del juego 
+
+1) podra cambiar cartas entre filas, las filas estan indicadas con su correspondiente numero , 
+que representa cada escalera con la cantidad de cartas seguidas
+
+2) podra cambiar de fila : 
+  -seleccionando la fila e indicando a la fila a la cual se quiere pasar las cartas
+  por ejemplo `3-7` (que indica pasar las cartas de fila 3 a fila 7) , pasando las cartas si cumplen las reglas
+
+3) las familias o palos de cartas se identifican con una letra
+  C corazon
+  P pica
+  T treboles
+  D diamantes
+
+5) por palo posee 12 cartas 
+  1) AS
+  2) 2
+  3) 3
+  4) 4
+  5) 5 
+  6) 6 
+  7) 7 
+  8) 8
+  9) 9
+  10) 10
+  11) J (Jota)
+  12) Q (Reina)
+  13) K (Rey)
+   
+   Asi mismo enumerando la relevancia o importancia de cada carta en el juego 
+
+6) se podra cambiar las cartas si cumple el siguiente orden 
+  
+por ejemplo 
+  `
+  C AS
+  P 2
+  `
+  podre pasar el as de corazon si a donde quiero pasar es una carta con mayor denominacion y siendo de diferente palo
+ `
+ P 2  C AS
+`
+  
+7) ganara cuando posea una fila o escalera completa de K hasta el As
+
+8) podra pedir una carta del mazo que se indica en el juego,para obtenerlo debe presionar la letra `y`
+e automaticamente se acomodara en la escalera , si no se devuelve al mazo
