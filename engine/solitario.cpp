@@ -399,8 +399,14 @@ void Solitario::tablero() {
   std::string space_ = "      ";
   std::string x = space + "  x " + space;
   int i = 1;
+  std::string xs[7];
+  for (int r = 0; r < 7; r++) {
+    for (int j = 0; j < r; j++) {
+      xs[r] += x;
+    }
+  }
   for (auto arr : this->aux_pilas) {
-    std::cout << i << ")";
+    std::cout << i << ")" << xs[i - 1];
     for (auto elementos : arr) {
       std::cout << " " << elementos->getFamily() << " " << elementos->getValue()
                 << " ";
